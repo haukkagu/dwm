@@ -50,11 +50,14 @@ static const Layout layouts[] = {
 	{ MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
 
+#include "movestack.c"
 static Key keys[] = {
 	/* modifier                     key               function        argument */
 	{ MODKEY,                       XK_b,             togglebar,      {0} },
 	{ MODKEY,                       XK_j,             focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,             focusstack,     {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_j,             movestack,      {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_k,             movestack,      {.i = -1 } },
 	{ MODKEY,                       XK_bracketleft,   incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_bracketright,  incnmaster,     {.i = +1 } },
 	{ MODKEY,                       XK_h,             setmfact,       {.f = -0.05} },
