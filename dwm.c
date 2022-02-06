@@ -213,6 +213,7 @@ static void tagmon(const Arg *arg);
 static void tile(Monitor *);
 static void togglebar(const Arg *arg);
 static void togglefloating(const Arg *arg);
+static void togglegaps(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
 static void unfocus(Client *c, int setfocus);
@@ -263,6 +264,7 @@ static void (*handler[LASTEvent]) (XEvent *) = {
 };
 static Atom wmatom[WMLast], netatom[NetLast];
 static int running = 1;
+static int gapson = 1;
 static Cur *cursor[CurLast];
 static Clr **scheme;
 static Display *dpy;
@@ -1708,24 +1710,43 @@ tile(Monitor *m)
 	if (n == 0)
 		return;
 
-	if (n > m->nmaster)
-		mw = m->nmaster ? (m->ww - (g = gappix)) * m->mfact - gappox : 0;
-	else
-		mw = m->ww - gappox*2;
-	for (i = my = ty = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
-		if (i < m->nmaster) {
-			r = MIN(n, m->nmaster) - i;
-			h = (m->wh - my - gappix * (r - 1) - 2*gappox) / r;
-			resize(c, m->wx + gappox, m->wy + my + gappox, mw - (2*c->bw), h - (2*c->bw), 0);
-			if (my + HEIGHT(c) < m->wh)
-				my += HEIGHT(c) + gappix;
-		} else {
-			r = n - i;
-			h = (m->wh - ty - gappix * (r - 1) - 2*gappox) / r;
-			resize(c, m->wx + mw + g + gappox, m->wy + ty + gappox, m->ww - mw - g - 2*gappox - (2*c->bw), h - (2*c->bw), 0);
-			if (ty + HEIGHT(c) < m->wh)
-				ty += HEIGHT(c) + gappix;
-		}
+	if (gapson) {
+		if (n > m->nmaster)
+			mw = m->nmaster ? (m->ww - (g = gappix)) * m->mfact - gappox : 0;
+		else
+			mw = m->ww - gappox*2;
+		for (i = my = ty = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
+			if (i < m->nmaster) {
+				r = MIN(n, m->nmaster) - i;
+				h = (m->wh - my - gappix * (r - 1) - 2*gappox) / r;
+				resize(c, m->wx + gappox, m->wy + my + gappox, mw - (2*c->bw), h - (2*c->bw), 0);
+				if (my + HEIGHT(c) < m->wh)
+					my += HEIGHT(c) + gappix;
+			} else {
+				r = n - i;
+				h = (m->wh - ty - gappix * (r - 1) - 2*gappox) / r;
+				resize(c, m->wx + mw + g + gappox, m->wy + ty + gappox, m->ww - mw - g - 2*gappox - (2*c->bw), h - (2*c->bw), 0);
+				if (ty + HEIGHT(c) < m->wh)
+					ty += HEIGHT(c) + gappix;
+			}
+	}else {
+		if (n > m->nmaster)
+			mw = m->nmaster ? m->ww * m->mfact : 0;
+		else
+			mw = m->ww;
+		for (i = my = ty = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
+			if (i < m->nmaster) {
+				h = (m->wh - my) / (MIN(n, m->nmaster) - i);
+				resize(c, m->wx, m->wy + my, mw - (2*c->bw), h - (2*c->bw), 0);
+				if (my + HEIGHT(c) < m->wh)
+					my += HEIGHT(c);
+			} else {
+				h = (m->wh - ty) / (n - i);
+				resize(c, m->wx + mw, m->wy + ty, m->ww - mw - (2*c->bw), h - (2*c->bw), 0);
+				if (ty + HEIGHT(c) < m->wh)
+					ty += HEIGHT(c);
+			}
+	}
 }
 
 void
@@ -1748,6 +1769,13 @@ togglefloating(const Arg *arg)
 	if (selmon->sel->isfloating)
 		resize(selmon->sel, selmon->sel->x, selmon->sel->y,
 			selmon->sel->w, selmon->sel->h, 0);
+	arrange(selmon);
+}
+
+void
+togglegaps(const Arg *arg)
+{
+	gapson = !gapson;
 	arrange(selmon);
 }
 
