@@ -1709,22 +1709,22 @@ tile(Monitor *m)
 		return;
 
 	if (n > m->nmaster)
-		mw = m->nmaster ? (m->ww - (g = gappx)) * m->mfact : 0;
+		mw = m->nmaster ? (m->ww - (g = gappix)) * m->mfact - gappox : 0;
 	else
-		mw = m->ww;
+		mw = m->ww - gappox*2;
 	for (i = my = ty = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
 		if (i < m->nmaster) {
 			r = MIN(n, m->nmaster) - i;
-			h = (m->wh - my - gappx * (r - 1)) / r;
-			resize(c, m->wx, m->wy + my, mw - (2*c->bw), h - (2*c->bw), 0);
+			h = (m->wh - my - gappix * (r - 1) - 2*gappox) / r;
+			resize(c, m->wx + gappox, m->wy + my + gappox, mw - (2*c->bw), h - (2*c->bw), 0);
 			if (my + HEIGHT(c) < m->wh)
-				my += HEIGHT(c) + gappx;
+				my += HEIGHT(c) + gappix;
 		} else {
 			r = n - i;
-			h = (m->wh - ty - gappx * (r - 1)) / r;
-			resize(c, m->wx + mw + g, m->wy + ty, m->ww - mw - g - (2*c->bw), h - (2*c->bw), 0);
+			h = (m->wh - ty - gappix * (r - 1) - 2*gappox) / r;
+			resize(c, m->wx + mw + g + gappox, m->wy + ty + gappox, m->ww - mw - g - 2*gappox - (2*c->bw), h - (2*c->bw), 0);
 			if (ty + HEIGHT(c) < m->wh)
-				ty += HEIGHT(c) + gappx;
+				ty += HEIGHT(c) + gappix;
 		}
 }
 
