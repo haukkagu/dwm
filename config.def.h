@@ -22,13 +22,33 @@ static const char *colors[][3]      = {
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
+/* scratchpads */
+typedef struct {
+	const char *name;
+	const void *cmd;
+} Sp;
+
+const char *spcmd1[] = {"keepassxc", NULL };
+const char *spcmd2[] = {"st", "-n", "spfm", "-g", "120x34", "-e", "ranger", NULL };
+const char *spcmd3[] = {"st", "-n", "spspt", "-g", "120x34", "-e", "ncspot", NULL };
+static Sp scratchpads[] = {
+	/* name          cmd  */
+	{"keepassxc",   spcmd1},
+	{"spranger",    spcmd2},
+	{"spspt",       spcmd3},
+};
+
+/* rules */
 static const Rule rules[] = {
 	/* xprop(1):
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	/* class      instance      title       tags mask     isfloating   monitor */
+	{ "Firefox",  NULL,         NULL,       1 << 8,       0,           -1 },
+	{ NULL,       "keepassxc",  NULL,       SPTAG(0),     1,           -1 },
+	{ NULL,       "spfm",       NULL,       SPTAG(1),     1,           -1 },
+	{ NULL,       "spspt",      NULL,       SPTAG(2),     1,           -1 },
 };
 
 /* layout(s) */
@@ -55,6 +75,9 @@ static const Layout layouts[] = {
 #include "movestack.c"
 static Key keys[] = {
 	/* modifier                     key               function        argument */
+	{ MODKEY,                       XK_z,             togglescratch,  {.ui = 0} },
+	{ MODKEY,                       XK_x,             togglescratch,  {.ui = 1} },
+	{ MODKEY,                       XK_c,             togglescratch,  {.ui = 2} },
 	{ MODKEY,                       XK_b,             togglebar,      {0} },
 	{ MODKEY,                       XK_g,             togglegaps,     {0} },
 	{ MODKEY,                       XK_j,             focusstack,     {.i = +1 } },
