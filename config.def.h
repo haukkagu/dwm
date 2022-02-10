@@ -31,13 +31,13 @@ typedef struct {
 } Sp;
 
 const char *spcmd1[] = {"keepassxc", NULL };
-const char *spcmd2[] = {"st", "-n", "spfm", "-g", "120x34", "-e", "ranger", NULL };
-const char *spcmd3[] = {"st", "-n", "spspt", "-g", "120x34", "-e", "ncspot", NULL };
+const char *spcmd2[] = {"st", "-n", "spspt", "-g", "120x34", "-e", "ncspot",   NULL };
+const char *spcmd3[] = {"st", "-n", "spcal", "-g", "120x34", "-e", "calcurse", NULL };
 static Sp scratchpads[] = {
 	/* name          cmd  */
 	{"keepassxc",   spcmd1},
-	{"spranger",    spcmd2},
-	{"spspt",       spcmd3},
+	{"spspt",       spcmd2},
+	{"spcal",       spcmd3},
 };
 
 /* rules */
@@ -49,8 +49,8 @@ static const Rule rules[] = {
 	/* class      instance      title       tags mask     isfloating   monitor */
 	{ "Firefox",  NULL,         NULL,       1 << 8,       0,           -1 },
 	{ NULL,       "keepassxc",  NULL,       SPTAG(0),     1,           -1 },
-	{ NULL,       "spfm",       NULL,       SPTAG(1),     1,           -1 },
-	{ NULL,       "spspt",      NULL,       SPTAG(2),     1,           -1 },
+	{ NULL,       "spspt",      NULL,       SPTAG(1),     1,           -1 },
+	{ NULL,       "spcal",      NULL,       SPTAG(2),     1,           -1 },
 };
 
 /* layout(s) */
