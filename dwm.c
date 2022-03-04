@@ -60,6 +60,19 @@
 #define SPTAG(i) 				((1 << LENGTH(tags)) << (i))
 #define SPTAGMASK   			(((1 << LENGTH(scratchpads))-1) << LENGTH(tags))
 #define TEXTW(X)                (drw_fontset_getwidth(drw, (X)) + lrpad)
+#define XRDB_LOAD_INT(R,V)      if (XrmGetResource(xrdb, R, NULL, &type, &value) == True) { \
+                                  if (value.addr != NULL) { \
+				    int i = 0;\
+				    for (; i <= strlen(value.addr); i++) { \
+				       if (value.addr[i] < 48) break;\
+				       if (value.addr[i] > 57) break;\
+				    }\
+				    if (i == strlen(value.addr)) {\
+				       V = strtoul(value.addr, NULL, 10); \
+				    } \
+				  } \
+                                }
+
 #define XRDB_LOAD_COLOR(R,V)    if (XrmGetResource(xrdb, R, NULL, &type, &value) == True) { \
                                   if (value.addr != NULL && strnlen(value.addr, 8) == 7 && value.addr[0] == '#') { \
                                     int i = 1; \
@@ -1093,6 +1106,9 @@ loadxrdb()
       xrdb = XrmGetStringDatabase(resm);
 
       if (xrdb != NULL) {
+        XRDB_LOAD_INT("dwm.gappix", gappix);
+        XRDB_LOAD_INT("dwm.gappox", gappox);
+
         XRDB_LOAD_COLOR("dwm.normbordercolor", normbordercolor);
         XRDB_LOAD_COLOR("dwm.normbgcolor", normbgcolor);
         XRDB_LOAD_COLOR("dwm.normfgcolor", normfgcolor);
